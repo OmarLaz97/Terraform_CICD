@@ -1,0 +1,4 @@
+# Host variables for the ec2 system
+---
+ansible_host: 54.159.110.29
+ansible_user: ubuntu

@@ -1,0 +1,66 @@
+---
+  - hosts: all
+    vars_files:
+      - vault-pass.yml
+    tasks:
+      - name: upgrade apt-get
+        command: apt-get update
+
+      - name: Download Kubectl
+        get_url:
+          url: https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl
+          dest: /home
+
+      - name: Install kubectl
+        command: install /home/kubectl /usr/local/bin/kubectl
+
+      - name: Install required system packages
+        apt: name={{ item }} state=latest update_cache=yes
+        loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+      - name: Add Docker GPG apt Key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add Docker Repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu bionic stable
+          state: present
+
+      - name: Update apt and install docker-ce
+        apt: update_cache=yes name=docker-ce state=latest
+
+      - name: Download minikube
+        get_url:
+          url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          dest: /home
+
+      - name: Install minikube
+        command: install /home/minikube-linux-amd64 /usr/local/bin/minikube
+
+      - name: Check Minikube
+        command: minikube version
+
+      - name: Install Conntrack
+        command: apt-get install -y conntrack      
+      
+      - name: Start Minikube
+        command: minikube start --vm-driver=none
+      
+      - name: Check minikube status
+        command: minikube status
+
+      - name: Add Nginx/Ingress Addon
+        command: minikube addons enable ingress
+      
+      - name: Add minikube secret
+        command: kubectl create secret generic pgpassword --from-literal PGPASSWORD={{ password }}
+
+      - name: Git checkout the k8s configuration files
+        ansible.builtin.git:
+          repo: 'https://github.com/OmarLaz97/k8s_CICD.git'
+          dest: /home/k8s_CICD
+
+      - name: Deploy APP
+        command: kubectl apply -f /home/k8s_CICD/k8s
