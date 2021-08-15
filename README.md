@@ -29,6 +29,7 @@ Please create an IAM role on your AWS account and add the AWS_ACCESS_KEY and AWS
 The application is very easy to run.
 
 Just by running a single command you will be able to create and deploy the application using minikube on the ec2 machine
+### It will prompt you to add the local machine password and will ask for ansible vault password that i will send via email
 
 ```sh
 cd Terraform_CICD
