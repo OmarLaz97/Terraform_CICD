@@ -26,9 +26,9 @@ Please create an IAM role on your AWS account and add the AWS_ACCESS_KEY and AWS
 
 ## Run the app
 
-The application is very easy to install and deploy in a Docker container.
+The application is very easy to run.
 
-Just by running a single command you will be able to create and deploy the an application using minikube on the ec2 machine
+Just by running a single command you will be able to create and deploy the application using minikube on the ec2 machine
 
 ```sh
 cd Terraform_CICD
